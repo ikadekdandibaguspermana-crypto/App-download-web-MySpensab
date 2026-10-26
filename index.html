@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AppKu – Pasang di laptop</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#2f4bff">
+<link rel="icon" href="icon-192.png">
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<style>
+:root{--bg:#f3f5f1;--ink:#16222a;--mute:#5d6b72;--line:#d5dbd6;--acc:#2f4bff;--accInk:#fff;--card:#fff}
+@media(prefers-color-scheme:dark){:root{--bg:#10171b;--ink:#eef2ef;--mute:#9aa8ae;--line:#26333a;--acc:#6d83ff;--accInk:#10171b;--card:#18222773}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 "Segoe UI",system-ui,sans-serif}
+header,main,footer{max-width:1000px;margin:0 auto;padding:0 24px}
+header{display:flex;justify-content:space-between;align-items:center;height:72px}
+.logo{font-weight:800;font-size:20px;letter-spacing:-.02em}
+.user{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--mute)}
+.user img{width:30px;height:30px;border-radius:50%}
+button{font:inherit;cursor:pointer;border:0;border-radius:10px;padding:12px 22px;font-weight:600}
+.pri{background:var(--acc);color:var(--accInk)}
+.pri:focus-visible,.ghost:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+.ghost{background:none;color:var(--mute);padding:6px 10px;text-decoration:underline}
+.hero{display:grid;grid-template-columns:1.1fr 1fr;gap:48px;align-items:center;padding:56px 0 72px}
+h1{font-size:clamp(34px,5vw,54px);line-height:1.08;letter-spacing:-.03em;margin:0 0 16px}
+.lead{color:var(--mute);max-width:46ch;margin:0 0 28px}
+.win{border:1px solid var(--line);border-radius:14px;background:var(--card);overflow:hidden;box-shadow:0 20px 50px -25px rgba(22,34,42,.4)}
+.bar{display:flex;gap:6px;padding:10px 14px;border-bottom:1px solid var(--line)}
+.bar i{width:10px;height:10px;border-radius:50%;background:var(--line)}
+.steps{list-style:none;margin:0;padding:8px 20px 20px}
+.steps li{display:flex;gap:14px;padding:14px 0;border-bottom:1px solid var(--line);color:var(--mute)}
+.steps li:last-child{border:0}
+.steps b{display:block;color:var(--ink)}
+.dot{flex:none;width:26px;height:26px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;font-size:13px;font-weight:700}
+.steps li.now{color:var(--ink)}.steps li.now .dot{border-color:var(--acc);color:var(--acc)}
+.steps li.done .dot{background:var(--acc);border-color:var(--acc);color:var(--accInk)}
+#panel{min-height:110px}
+.note{font-size:14px;color:var(--mute);margin-top:12px;max-width:50ch}
+.hide{display:none!important}
+footer{padding:28px 24px 48px;color:var(--mute);font-size:14px;border-top:1px solid var(--line)}
+@media(max-width:760px){.hero{grid-template-columns:1fr;gap:32px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">AppKu</div>
+  <div class="user hide" id="user"><img id="avatar" alt=""><span id="uname"></span><button class="ghost" id="logout">Keluar</button></div>
+</header>
+
+<main>
+  <section class="hero">
+    <div>
+      <h1>Pakai AppKu langsung dari laptop, tanpa buka browser.</h1>
+      <p class="lead">Masuk dengan akun Google, lalu pasang AppKu sebagai aplikasi. Ikonnya muncul di desktop dan menu Start.</p>
+      <div id="panel"></div>
+    </div>
+    <div class="win" aria-label="Tiga langkah pemasangan">
+      <div class="bar"><i></i><i></i><i></i></div>
+      <ol class="steps">
+        <li id="s1"><span class="dot">1</span><span><b>Buka beranda</b>Kamu sudah di sini.</span></li>
+        <li id="s2"><span class="dot">2</span><span><b>Masuk dengan Google</b>Pakai akun Gmail kamu.</span></li>
+        <li id="s3"><span class="dot">3</span><span><b>Pasang aplikasi</b>Satu klik, selesai.</span></li>
+      </ol>
+    </div>
+  </section>
+</main>
+<footer>AppKu · Berjalan di Chrome, Edge, dan browser berbasis Chromium.</footer>
+
+<script>
+
+const GOOGLE_CLIENT_ID = "";
+
+const $ = id => document.getElementById(id);
+let deferredPrompt = null;
+
+function getUser(){ try{ return JSON.parse(localStorage.getItem("appku_user")); }catch(e){ return null; } }
+function setUser(u){ try{ u ? localStorage.setItem("appku_user", JSON.stringify(u)) : localStorage.removeItem("appku_user"); }catch(e){} }
+
+function parseJwt(t){
+  const b = t.split(".")[1].replace(/-/g,"+").replace(/_/g,"/");
+  return JSON.parse(decodeURIComponent(atob(b).split("").map(c=>"%"+("00"+c.charCodeAt(0).toString(16)).slice(-2)).join("")));
+}
+function onGoogle(resp){
+  const p = parseJwt(resp.credential);
+  setUser({name:p.name, email:p.email, picture:p.picture});
+  render();
+}
+function isInstalled(){
+  return matchMedia("(display-mode: standalone)").matches || navigator.standalone;
+}
+
+window.addEventListener("beforeinstallprompt", e => { e.preventDefault(); deferredPrompt = e; render(); });
+window.addEventListener("appinstalled", () => { deferredPrompt = null; render(); });
+
+function render(){
+  const u = getUser(), inst = isInstalled();
+  $("user").classList.toggle("hide", !u);
+  if(u){ $("uname").textContent = u.name || u.email; $("avatar").src = u.picture || ""; $("avatar").classList.toggle("hide", !u.picture); }
+  $("s1").className = "done";
+  $("s2").className = u ? "done" : "now";
+  $("s3").className = inst ? "done" : (u ? "now" : "");
+  const p = $("panel"); p.innerHTML = "";
+
+  if(!u){
+    const g = document.createElement("div"); g.id = "gbtn"; p.appendChild(g);
+    if(GOOGLE_CLIENT_ID && window.google && google.accounts){
+      google.accounts.id.initialize({client_id:GOOGLE_CLIENT_ID, callback:onGoogle});
+      google.accounts.id.renderButton(g,{theme:"outline",size:"large",text:"signin_with",shape:"pill",locale:"id"});
+    }else if(GOOGLE_CLIENT_ID){
+      g.textContent = "Memuat tombol Google… muat ulang halaman jika tidak muncul.";
+      setTimeout(render, 1200);
+    }else{
+      const b = document.createElement("button"); b.className = "pri"; b.textContent = "Masuk (mode uji coba)";
+      b.onclick = () => { setUser({name:"Pengguna Uji", email:"uji@gmail.com"}); render(); };
+      p.appendChild(b);
+      p.insertAdjacentHTML("beforeend",'<p class="note">Login Google asli belum aktif. Isi GOOGLE_CLIENT_ID di index.html untuk mengaktifkannya.</p>');
+    }
+    return;
+  }
+  if(inst){ p.innerHTML = '<p><b>AppKu sudah terpasang.</b> Buka dari desktop atau menu Start.</p>'; return; }
+  const b = document.createElement("button"); b.className = "pri"; b.textContent = "Pasang aplikasi di laptop";
+  b.onclick = async () => {
+    if(deferredPrompt){ deferredPrompt.prompt(); await deferredPrompt.userChoice; deferredPrompt = null; render(); }
+    else{ alert("Browser ini belum menampilkan jendela pemasangan. Di Chrome atau Edge, klik ikon pasang di kanan bilah alamat, atau menu ⋮ → Instal AppKu."); }
+  };
+  p.appendChild(b);
+  p.insertAdjacentHTML("beforeend",'<p class="note">Halo, '+(u.name||u.email).replace(/</g,"&lt;")+'. Klik tombol di atas, lalu pilih Instal.</p>');
+}
+
+$("logout").onclick = () => { setUser(null); if(window.google && google.accounts) google.accounts.id.disableAutoSelect(); render(); };
+if("serviceWorker" in navigator) addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(()=>{}));
+render();
+</script>
+</body>
+</html>
