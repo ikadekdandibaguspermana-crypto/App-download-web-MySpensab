@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Unduh MySpensab</title>
+<meta name="theme-color" content="#04060c">
+<link rel="icon" href="style/asset/logo.png">
+<link rel="stylesheet" href="style/style.css">
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body>
+<div class="app">
+
+  <div class="topbar">
+    <img src="style/asset/logo.png" alt="" class="tbLogo" onerror="this.style.display='none'">
+    <span>MySpensab</span>
+    <button class="menu hide" id="menu" aria-label="Akun" aria-expanded="false"><span id="tbInit"></span></button>
+  </div>
+  <div class="scrim" id="scrim"></div>
+
+  <aside class="side glass" id="side">
+    <div class="brand">
+      <img src="style/asset/logo.png" alt="" onerror="this.style.display='none'">
+      <div><b>MySpensab</b><small>SMP Negeri 1 Abiansemal</small></div>
+    </div>
+
+    <nav aria-label="Menu utama">
+      <a href="#beranda" data-v="home"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>Beranda</a>
+      <a href="#pasang" data-v="install"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 20h14"/></svg>Pasang aplikasi</a>
+      <a class="ext" id="navWeb" href="#" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg>Buka website</a>
+      <a href="#bantuan" data-v="help"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 015 .5c0 1.7-2.5 2-2.5 3.5"/><path d="M12 17h.01"/></svg>Bantuan</a>
+    </nav>
+
+    <div class="me hide" id="me">
+      <img id="avatar" alt="" class="hide">
+      <div class="who"><b id="uname"></b><small id="umail"></small></div>
+      <button class="out" id="logout">Keluar</button>
+    </div>
+    <p class="lockhint" id="lockhint">Masuk dengan akun Google untuk membuka menu.</p>
+  </aside>
+
+  <main class="main">
+
+    <!-- Masuk (wajib) -->
+    <section id="v-login" class="view hide">
+      <div class="loginGrid">
+        <div class="login glass">
+          <img src="style/asset/logo.png" alt="" class="bigLogo" onerror="this.style.display='none'">
+          <h1>Masuk dulu, lalu pilih cara memakai MySpensab.</h1>
+          <p class="lead">Halaman ini hanya bisa dibuka dengan akun Google. Setelah masuk, kamu bisa memasang MySpensab sebagai aplikasi atau langsung membuka websitenya.</p>
+          <div id="gbtn"></div>
+          <button class="btn pri hide" id="demo">Masuk (mode uji coba)</button>
+          <p class="note hide" id="demoNote">Login Google asli belum aktif karena GOOGLE_CLIENT_ID di script.js masih kosong.</p>
+        </div>
+        <div class="stage" aria-hidden="true">
+          <div class="mock glass">
+            <div class="mk-side"><i></i><i class="on"></i><i></i><i></i><i></i></div>
+            <div class="mk-main">
+              <div class="mk-row"><span class="chip on">Android</span><span class="chip">iPhone</span><span class="chip">Laptop</span></div>
+              <svg viewBox="0 0 300 110" class="mk-chart" preserveAspectRatio="none">
+                <defs><linearGradient id="g1" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#60a5fa" stop-opacity=".5"/><stop offset="1" stop-color="#60a5fa" stop-opacity="0"/></linearGradient></defs>
+                <path d="M0 80 C30 40 55 95 90 60 S150 20 185 55 S250 30 300 12 V110 H0Z" fill="url(#g1)"/>
+                <path class="ln" pathLength="1" d="M0 80 C30 40 55 95 90 60 S150 20 185 55 S250 30 300 12" fill="none" stroke="#93c5fd" stroke-width="2.5"/>
+                <path class="ln" pathLength="1" d="M0 98 C40 80 60 104 100 88 S170 70 210 90 S270 70 300 78" fill="none" stroke="#4ade80" stroke-width="2" opacity=".8"/>
+              </svg>
+              <div class="mk-bar"><b></b></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Beranda -->
+    <section id="v-home" class="view hide">
+      <h1>Selamat datang kembali, <span id="hi"></span>!</h1>
+      <p class="lead">Mau pakai MySpensab dengan cara apa hari ini?</p>
+      <div class="stats">
+        <div class="stat glass"><small>Akun</small><b id="statMail"></b></div>
+        <div class="stat glass"><small>Perangkat</small><b id="devName"></b></div>
+        <div class="stat glass"><small>Browser</small><b id="brName"></b><span class="pill" id="brOk"></span></div>
+      </div>
+      <div class="choices">
+        <div class="choice glass main-choice">
+          <h2>Pasang sebagai aplikasi</h2>
+          <p>Ikon MySpensab muncul di layar utama atau desktop, dan terbuka seperti aplikasi biasa. Cocok kalau kamu memakainya setiap hari.</p>
+          <a class="btn pri" href="#pasang">Lihat cara pasang</a>
+        </div>
+        <div class="choice glass">
+          <h2>Buka website langsung</h2>
+          <p>Tanpa memasang apa pun. MySpensab terbuka di browser, sama seperti biasa.</p>
+          <a class="btn line" id="goWeb" href="#" target="_blank" rel="noopener">Buka MySpensab</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Pasang -->
+    <section id="v-install" class="view hide">
+      <h1>Pasang aplikasi</h1>
+      <p class="lead">Pilih perangkatmu, lalu ikuti langkahnya.</p>
+      <a class="btn pri" id="goInstall" href="#">Buka MySpensab dan pasang</a>
+      <div class="panel glass">
+        <div class="tabs" role="tablist">
+          <button class="tab" role="tab" data-t="android">Android</button>
+          <button class="tab" role="tab" data-t="ios">iPhone / iPad</button>
+          <button class="tab" role="tab" data-t="pc">Laptop</button>
+        </div>
+        <div id="t-android"><ol>
+          <li>Pakai <b>Chrome</b>, lalu ketuk <b>Buka MySpensab dan pasang</b>.</li>
+          <li>Banner kuning muncul di bawah layar. Ketuk <b>Pasang</b>.</li>
+          <li>Ikon MySpensab muncul di layar utama.</li>
+        </ol></div>
+        <div id="t-ios" class="hide"><ol>
+          <li>Wajib pakai <b>Safari</b>, bukan browser lain.</li>
+          <li>Ketuk <b>Buka MySpensab dan pasang</b>.</li>
+          <li>Ketuk tombol <b>Bagikan</b> (kotak dengan panah ke atas).</li>
+          <li>Pilih <b>Tambah ke Layar Utama</b>, lalu ketuk <b>Tambah</b>.</li>
+        </ol></div>
+        <div id="t-pc" class="hide"><ol>
+          <li>Pakai <b>Chrome</b> atau <b>Edge</b>, lalu klik <b>Buka MySpensab dan pasang</b>.</li>
+          <li>Klik <b>Pasang</b> pada banner kuning, lalu <b>Instal</b>.</li>
+          <li>MySpensab muncul di desktop atau menu Start.</li>
+        </ol></div>
+        <p class="note">Absen otomatis lewat GPS hanya bekerja saat aplikasi MySpensab sedang dibuka.</p>
+      </div>
+    </section>
+
+    <!-- Bantuan -->
+    <section id="v-help" class="view hide">
+      <h1>Bantuan</h1>
+      <div class="faq glass">
+        <details><summary>Tombol Pasang tidak muncul.</summary><p>Pakai Chrome atau Edge. Di iPhone pakai Safari lalu pilih Tambah ke Layar Utama. Kalau MySpensab sudah terpasang, tombolnya memang tidak tampil.</p></details>
+        <details><summary>Apakah harus memasang aplikasi?</summary><p>Tidak. Kamu bisa memilih Buka website langsung dan memakai MySpensab di browser seperti biasa.</p></details>
+        <details><summary>Akun Google tidak bisa masuk.</summary><p>Pastikan kamu membuka halaman ini lewat alamat resmi sekolah, lalu coba lagi. Kalau masih gagal, hubungi admin sekolah.</p></details>
+      </div>
+    </section>
+
+  </main>
+</div>
+<script src="scriptjs/script.js"></script>
+</body>
+</html>
