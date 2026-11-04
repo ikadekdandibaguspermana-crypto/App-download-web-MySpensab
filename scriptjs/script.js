@@ -1,8 +1,42 @@
-const MYSPENSAB_URL    = "https://aventra-x-2026-web-bydandi.netlify.app/";
-const GOOGLE_CLIENT_ID = "874381163137-o09b7un6intkms68ofrklsv0doq0dpuq.apps.googleusercontent.com"
 
 const $ = id => document.getElementById(id);
 const WEB = MYSPENSAB_URL.replace(/\/?$/, "/");
+
+/* ---- Tombol pasang: unduh installer bila tersedia, kalau tidak lewat browser ---- */
+const LABEL = { windows: "Unduh untuk Windows", android: "Unduh untuk Android", mac: "Unduh untuk Mac" };
+const FILE_STEPS = {
+  windows: [
+    "Klik <b>Unduh untuk Windows</b> dan tunggu file selesai diunduh.",
+    "Buka file <b>MySpensab-Setup.exe</b> dari folder Downloads.",
+    "Kalau Windows menampilkan peringatan, klik <b>More info</b>, lalu <b>Run anyway</b>.",
+    "Tunggu pemasangan selesai. Ikon MySpensab muncul di desktop dan menu Start."
+  ],
+  android: [
+    "Ketuk <b>Unduh untuk Android</b> dan tunggu file selesai diunduh.",
+    "Buka file <b>MySpensab.apk</b> dari notifikasi atau folder Downloads.",
+    "Kalau diminta, izinkan <b>Pasang dari sumber ini</b> untuk browser yang kamu pakai.",
+    "Ketuk <b>Pasang</b>. Ikon MySpensab muncul di layar utama."
+  ],
+  mac: [
+    "Klik <b>Unduh untuk Mac</b> dan tunggu file selesai diunduh.",
+    "Buka file <b>MySpensab.dmg</b>, lalu seret MySpensab ke folder Applications.",
+    "Buka MySpensab dari Launchpad."
+  ]
+};
+function setInstall(){
+  const os = dev === "pc" ? (/windows/i.test(ua) ? "windows" : /mac/i.test(ua) ? "mac" : "pc") : dev;
+  const file = (typeof DOWNLOADS !== "undefined" && DOWNLOADS[os]) || "";
+  const gi = $("goInstall");
+  const el = $(os === "android" ? "t-android" : os === "ios" ? "t-ios" : "t-pc");
+  if (!el.dataset.orig) el.dataset.orig = el.innerHTML;
+  if (file){
+    gi.href = file; gi.setAttribute("download", ""); gi.textContent = LABEL[os];
+    el.innerHTML = "<ol>" + FILE_STEPS[os].map(s => "<li>" + s + "</li>").join("") + "</ol>";
+  } else {
+    gi.href = WEB + "?pasang=1"; gi.removeAttribute("download"); gi.textContent = "Buka MySpensab dan pasang";
+    el.innerHTML = el.dataset.orig;
+  }
+}
 
 /* ---- Pengguna (disimpan di browser) ---- */
 const getU = () => { try { return JSON.parse(localStorage.getItem("ms_user")); } catch (e) { return null; } };
@@ -51,7 +85,7 @@ function show(){
     $("avatar").src = u.picture || "";
     $("avatar").classList.toggle("hide", !u.picture);
     $("navWeb").href = $("goWeb").href = WEB;
-    $("goInstall").href = WEB + "?pasang=1";
+    setInstall();
     tab(dev);
     $("tbInit").textContent = (u.name || u.email || "?").trim().charAt(0).toUpperCase();
     $("menu").style.backgroundImage = u.picture ? "url(" + u.picture + ")" : "";
