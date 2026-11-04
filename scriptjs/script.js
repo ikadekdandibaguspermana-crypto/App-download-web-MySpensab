@@ -1,5 +1,5 @@
 const MYSPENSAB_URL    = "https://aventra-x-2026-web-bydandi.netlify.app/";
-const GOOGLE_CLIENT_ID = ""
+const GOOGLE_CLIENT_ID = "874381163137-o09b7un6intkms68ofrklsv0doq0dpuq.apps.googleusercontent.com"
 
 const $ = id => document.getElementById(id);
 const WEB = MYSPENSAB_URL.replace(/\/?$/, "/");
