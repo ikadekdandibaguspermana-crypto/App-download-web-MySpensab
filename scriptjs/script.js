@@ -8,20 +8,37 @@ const FILE_STEPS = {
   windows: [
     "Klik <b>Unduh untuk Windows</b> dan tunggu file selesai diunduh.",
     "Buka file <b>MySpensab-Setup.exe</b> dari folder Downloads.",
-    "Kalau Windows menampilkan peringatan, klik <b>More info</b>, lalu <b>Run anyway</b>.",
+    "Jika Windows memberi peringatan keamanan, pastikan file berasal dari rilis resmi sekolah sebelum menjalankannya.",
     "Tunggu pemasangan selesai. Ikon MySpensab muncul di desktop dan menu Start."
   ],
+};
+const WEB_STEPS = {
   android: [
-    "Ketuk <b>Unduh untuk Android</b> dan tunggu file selesai diunduh.",
-    "Buka file <b>MySpensab.apk</b> dari notifikasi atau folder Downloads.",
-    "Kalau diminta, izinkan <b>Pasang dari sumber ini</b> untuk browser yang kamu pakai.",
-    "Ketuk <b>Pasang</b>. Ikon MySpensab muncul di layar utama."
+    "Ketuk <b>Pasang MySpensab</b> untuk membuka situs MySpensab.",
+    "Ketuk tombol <b>Pasang</b> pada banner. Jika tidak muncul, buka menu Chrome (⋮), lalu pilih <b>Instal aplikasi</b> atau <b>Tambahkan ke layar utama</b>.",
+    "Ikon MySpensab akan muncul di layar utama. Pemasangan Android memakai aplikasi web; file APK belum tersedia."
+  ],
+  ios: [
+    "Buka MySpensab di <b>Safari</b>.",
+    "Ketuk tombol <b>Bagikan</b>, lalu pilih <b>Tambah ke Layar Utama</b>.",
+    "Ketuk <b>Tambah</b>. File IPA belum tersedia; pemasangan dilakukan melalui Safari."
   ],
   mac: [
-    "Klik <b>Unduh untuk Mac</b> dan tunggu file selesai diunduh.",
-    "Buka file <b>MySpensab.dmg</b>, lalu seret MySpensab ke folder Applications.",
-    "Buka MySpensab dari Launchpad."
+    "Klik <b>Pasang MySpensab</b> untuk membuka situs MySpensab di Chrome atau Edge.",
+    "Pilih ikon <b>Instal</b> di bilah alamat atau buka menu browser dan pilih <b>Instal MySpensab</b>.",
+    "File DMG belum tersedia; MySpensab dipasang sebagai aplikasi web."
+  ],
+  pc: [
+    "Buka MySpensab di Chrome atau Edge.",
+    "Buka menu browser, lalu pilih <b>Instal aplikasi</b> jika tersedia.",
+    "Installer Linux belum tersedia; gunakan MySpensab sebagai aplikasi web."
   ]
+};
+const WEB_LABEL = {
+  android: "Pasang MySpensab di Android",
+  ios: "Pasang MySpensab di iPhone/iPad",
+  mac: "Pasang MySpensab di Mac",
+  pc: "Buka MySpensab"
 };
 function setInstall(){
   const os = dev === "pc" ? (/windows/i.test(ua) ? "windows" : /mac/i.test(ua) ? "mac" : "pc") : dev;
@@ -33,8 +50,8 @@ function setInstall(){
     gi.href = file; gi.setAttribute("download", ""); gi.textContent = LABEL[os];
     el.innerHTML = "<ol>" + FILE_STEPS[os].map(s => "<li>" + s + "</li>").join("") + "</ol>";
   } else {
-    gi.href = WEB + "?pasang=1"; gi.removeAttribute("download"); gi.textContent = "Buka MySpensab dan pasang";
-    el.innerHTML = el.dataset.orig;
+    gi.href = WEB + "?pasang=1"; gi.removeAttribute("download"); gi.textContent = WEB_LABEL[os] || "Buka MySpensab";
+    el.innerHTML = "<ol>" + (WEB_STEPS[os] || WEB_STEPS.pc).map(s => "<li>" + s + "</li>").join("") + "</ol>";
   }
 }
 
